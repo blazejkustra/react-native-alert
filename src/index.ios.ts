@@ -1,5 +1,4 @@
 import { Alert as RNAlert } from 'react-native';
-import ReactNativeAlert from './NativeReactNativeAlert';
 import type {
   AlertButton,
   AlertOptions,
@@ -23,28 +22,8 @@ class Alert {
    * Launches a prompt dialog with the specified title and message, allowing the user to enter text.
    * Uses custom native module since iOS doesn't have built-in prompt.
    */
-  static prompt(
-    ...[title, message, buttons, type, defaultValue, keyboardType]: Parameters<
-      typeof RNAlert.prompt
-    >
-  ) {
-    // Convert function callback to button array for native module
-    if (typeof buttons === 'function') {
-      const callback = buttons;
-      buttons = [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'OK', style: 'default', onPress: callback },
-      ];
-    }
-
-    ReactNativeAlert.prompt(
-      title,
-      message,
-      buttons,
-      type,
-      defaultValue,
-      keyboardType
-    );
+  static prompt(...args: Parameters<typeof RNAlert.prompt>) {
+    RNAlert.prompt(...args);
   }
 }
 

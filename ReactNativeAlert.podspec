@@ -13,8 +13,9 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/blazejkustra/react-native-alert.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm,cpp}"
-  s.private_header_files = "ios/**/*.h"
+  # No iOS native sources are needed; JS uses RN's Alert on iOS
+  s.source_files = ""
+  s.private_header_files = ""
 
 
   install_modules_dependencies(s)
