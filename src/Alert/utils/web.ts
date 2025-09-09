@@ -1,5 +1,8 @@
 import { Alert as RNAlert, type AlertButton } from 'react-native';
 
+// Track active dialogs to prevent multiple dialogs
+let activeDialog: HTMLDialogElement | null = null;
+
 // Web implementation
 export function createDialogElement(
   title: string | null | undefined,
@@ -87,11 +90,19 @@ export function showWebAlert(
   message?: string,
   buttons?: AlertButton[]
 ) {
+  // Prevent multiple dialogs
+  if (activeDialog) {
+    console.warn('Another alert dialog is already being displayed');
+    return;
+  }
+
   const dialog = createDialogElement(title, message, buttons);
+  activeDialog = dialog;
   document.body.appendChild(dialog);
   dialog.showModal();
   dialog.addEventListener('close', () => {
     document.body.removeChild(dialog);
+    activeDialog = null;
   });
 }
 
@@ -102,13 +113,21 @@ export function showWebPrompt(
   type?: 'default' | 'plain-text' | 'secure-text' | 'login-password',
   defaultValue?: string
 ) {
+  // Prevent multiple dialogs
+  if (activeDialog) {
+    console.warn('Another prompt dialog is already being displayed');
+    return;
+  }
+
   const inputField = `
     <input type="${type === 'secure-text' ? 'password' : 'text'}" value="${defaultValue || ''}" class="alert-input" />
   `;
   const dialog = createDialogElement(title, message, buttons, inputField);
+  activeDialog = dialog;
   document.body.appendChild(dialog);
   dialog.showModal();
   dialog.addEventListener('close', () => {
     document.body.removeChild(dialog);
+    activeDialog = null;
   });
 }
