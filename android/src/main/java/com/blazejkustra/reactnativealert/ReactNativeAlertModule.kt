@@ -122,6 +122,7 @@ class ReactNativeAlertModule(
   override fun onHostResume() = Unit
   override fun onHostPause() = Unit
   override fun onHostDestroy() {
+    dialogRef.get()?.let { if (it.isShowing) it.dismiss() }
     dialogRef.clear()
   }
 
