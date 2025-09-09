@@ -1,4 +1,4 @@
-import Alert from '../index';
+import Alert from '../../src/Alert/index.web';
 
 describe('ReactNativeAlert', () => {
   it('should export Alert class', () => {

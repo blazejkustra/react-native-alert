@@ -1,9 +1,4 @@
 import { Alert as RNAlert } from 'react-native';
-import type {
-  AlertButton,
-  AlertOptions,
-  PromptButtons,
-} from './NativeReactNativeAlert';
 
 /**
  * iOS-specific Alert implementation
@@ -28,4 +23,3 @@ class Alert {
 }
 
 export default Alert;
-export type { AlertButton, AlertOptions, PromptButtons };

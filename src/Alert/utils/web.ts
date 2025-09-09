@@ -1,10 +1,10 @@
-import type { AlertButton, PromptButtons } from '../NativeReactNativeAlert';
+import { Alert as RNAlert, type AlertButton } from 'react-native';
 
 // Web implementation
 export function createDialogElement(
   title: string | null | undefined,
   message?: string | null | undefined,
-  buttons: PromptButtons | null | undefined = [
+  buttons: Parameters<typeof RNAlert.prompt>[2] = [
     { text: 'OK', style: 'default' },
   ],
   inputField?: string
@@ -98,7 +98,7 @@ export function showWebAlert(
 export function showWebPrompt(
   title: string,
   message?: string,
-  buttons?: PromptButtons,
+  buttons?: Parameters<typeof RNAlert.prompt>[2],
   type?: 'default' | 'plain-text' | 'secure-text' | 'login-password',
   defaultValue?: string
 ) {

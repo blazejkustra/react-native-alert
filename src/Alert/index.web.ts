@@ -1,13 +1,8 @@
-import type {
-  AlertButton,
-  AlertOptions,
-  PromptButtons,
-} from './NativeReactNativeAlert';
 import { Alert as RNAlert } from 'react-native';
-import { createDialogElement } from './web/alert';
+import { createDialogElement } from './utils/web';
 
 // Import CSS for web platform
-require('./alert.css');
+// require('./web/alert.css');
 
 /**
  * Web-specific Alert implementation using HTML5 dialog elements
@@ -67,4 +62,3 @@ class Alert {
 }
 
 export default Alert;
-export type { AlertButton, AlertOptions, PromptButtons };

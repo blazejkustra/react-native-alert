@@ -22,9 +22,9 @@ class ReactNativeAlertPackage : BaseReactPackage() {
       moduleInfos[ReactNativeAlertModule.NAME] = ReactModuleInfo(
         ReactNativeAlertModule.NAME,
         ReactNativeAlertModule.NAME,
-        false,  // canOverrideExistingModule
-        false,  // needsEagerInit
-        false,  // isCxxModule
+        false, // canOverrideExistingModule
+        false, // needsEagerInit
+        false, // isCxxModule
         true // isTurboModule
       )
       moduleInfos
