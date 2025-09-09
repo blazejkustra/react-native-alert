@@ -1,214 +1,152 @@
 # @blazejkustra/react-native-alert
 
-Universal alerts and prompts for React Native that work across iOS, Android, and Web platforms with the same API as React Native's built-in Alert.
+✨ **Universal, customizable alerts and prompts** for React Native — identical API to the built-in `Alert`, but works seamlessly across **iOS, Android, and Web**.
 
-## Features
+## 🚀 Features
 
-- ✅ **Cross-platform**: Works on iOS, Android, and Web
-- ✅ **Same API**: Compatible with React Native's Alert API
-- ✅ **Prompt support**: Includes prompt functionality for all platforms
-- ✅ **Customizable**: Web implementation allows CSS customization
-- ✅ **Theme support**: Respects dark/light mode on Android
-- ✅ **TypeScript**: Full TypeScript support
+* **Cross-platform** – iOS, Android, Web with one API
+* **Drop-in replacement** – same API as `Alert`
+* **Prompts everywhere** – text input prompts supported on all platforms
+* **Modern Web implementation** – built with `<dialog>` + CSS custom properties
+* **Dark/light themes** – automatic with manual override
+* **Accessible** – full keyboard navigation + screen reader support
+* **TypeScript ready** – complete type definitions
 
-## Installation
+## 📦 Installation
 
 ```sh
 npm install @blazejkustra/react-native-alert
 ```
 
-### iOS Setup
+No extra setup needed on iOS or Android (just rebuild your app).
+On Web, styles are injected automatically and can be customized with CSS variables.
 
-For iOS, you need to run:
-
-```sh
-cd ios && pod install
-```
-
-### Android Setup
-
-No additional setup required for Android.
-
-### Web Setup
-
-For web, the library automatically includes the necessary CSS. You can customize the appearance by overriding the CSS classes.
-
-To override the CSS, you can add a `alert.css` file to your project.
-
-## Usage
+## 🛠 Usage
 
 ### Basic Alert
 
-```js
+```ts
 import Alert from '@blazejkustra/react-native-alert';
 
-Alert.alert('Alert Title', 'This is the alert message');
+Alert.alert('Hello!', 'This is a cross-platform alert.');
 ```
 
 ### Alert with Buttons
 
-```js
+```ts
 Alert.alert(
-  'Alert Title',
-  'This is the alert message',
+  'Confirm',
+  'Do you want to continue?',
   [
     { text: 'Cancel', style: 'cancel' },
-    { text: 'OK', style: 'default' }
+    { text: 'OK', style: 'default' },
   ]
 );
 ```
 
 ### Destructive Alert
 
-```js
+```ts
 Alert.alert(
-  'Delete Item',
-  'Are you sure you want to delete this item?',
+  'Delete item?',
+  'This action cannot be undone.',
   [
     { text: 'Cancel', style: 'cancel' },
-    { text: 'Delete', style: 'destructive' }
+    { text: 'Delete', style: 'destructive' },
   ]
 );
 ```
 
 ### Prompt
 
-```js
+```ts
 Alert.prompt(
-  'Enter Name',
-  'Please enter your name:',
+  'Enter your name',
+  'Please type your name below:',
   [
     { text: 'Cancel', style: 'cancel' },
-    { 
-      text: 'OK', 
-      style: 'default',
-      onPress: (value) => {
-        if (value) {
-          console.log('Name entered:', value);
-        }
-      }
-    }
+    { text: 'OK', onPress: (value) => console.log('Name:', value) },
   ],
   'plain-text',
   'John Doe'
 );
 ```
 
-### Secure Text Prompt
+### Secure Prompt
 
-```js
+```ts
 Alert.prompt(
-  'Enter Password',
-  'Please enter your password:',
+  'Password',
+  'Enter your password:',
   [
     { text: 'Cancel', style: 'cancel' },
-    { 
-      text: 'OK', 
-      style: 'default',
-      onPress: (value) => {
-        if (value) {
-          console.log('Password entered');
-        }
-      }
-    }
+    { text: 'OK', onPress: () => console.log('Password entered') },
   ],
   'secure-text'
 );
 ```
 
-## API Reference
+For more examples, see [example/src/App.tsx](example/src/App.tsx).
 
-### Alert.alert(title, message?, buttons?, options?)
+## 📖 API
 
-- `title` (string): The alert title
-- `message` (string, optional): The alert message
-- `buttons` (AlertButton[], optional): Array of button objects
-- `options` (AlertOptions, optional): Additional options
+Same as [React Native Alert](https://reactnative.dev/docs/alert).
 
-### Alert.prompt(title, message?, buttons?, type?, defaultValue?, keyboardType?)
+## 📱 Platform Notes
 
-- `title` (string): The prompt title
-- `message` (string, optional): The prompt message
-- `buttons` (AlertButton[], optional): Array of button objects
-- `type` (string, optional): Input type ('default', 'plain-text', 'secure-text', 'login-password')
-- `defaultValue` (string, optional): Default input value
-- `keyboardType` (string, optional): Keyboard type (Android only)
+* **iOS** – uses React Native's built-in `Alert.alert` and `Alert.prompt`
+* **Android** – uses React Native's built-in `Alert.alert` and custom native module with Material styling for `Alert.prompt`
+* **Web** – HTML5 `<dialog>`, themeable via CSS variables
 
-### Types
+## 🎨 Web Customization
 
-```typescript
-interface AlertButton {
-  text: string;
-  onPress?: (value?: string) => void;
-  style?: 'default' | 'cancel' | 'destructive';
-}
-
-interface AlertOptions {
-  cancelable?: boolean;
-  onDismiss?: () => void;
-}
-```
-
-## Platform-Specific Behavior
-
-### iOS
-- Uses native UIAlertController for alerts
-- Custom implementation for prompts (since iOS doesn't have built-in prompt)
-
-### Android
-- Uses native AlertDialog with Material Design
-- Automatically respects dark/light theme
-- Supports all input types and keyboard types
-
-### Web
-- Uses HTML5 `<dialog>` element
-- Fully customizable with CSS
-- Responsive design with dark mode support
-
-## Web Customization
-
-The web implementation includes CSS classes that you can override:
+Override CSS variables to match your design system:
 
 ```css
-.alert-dialog {
-  /* Dialog container */
+:root {
+  --rn-alert-accent: #059669;   /* Primary button */
+  --rn-alert-danger: #dc2626;   /* Destructive button */
+  --rn-alert-bg: #fefefe;       /* Dialog background */
+  --rn-alert-fg: #111827;       /* Text color */
+  --rn-alert-radius: 16px;      /* Border radius */
 }
 
-.alert-container {
-  /* Content container */
-}
-
-.alert-header {
-  /* Title styling */
-}
-
-.alert-message {
-  /* Message styling */
-}
-
-.alert-input {
-  /* Input field styling */
-}
-
-.alert-btn-default {
-  /* Default button styling */
-}
-
-.alert-btn-destructive {
-  /* Destructive button styling */
+:root[data-theme="dark"] {
+ ...
 }
 ```
 
-## Contributing
+Available variables:
+* `--rn-alert-bg` – dialog background
+* `--rn-alert-fg` – primary text color
+* `--rn-alert-muted` – secondary / muted text
+* `--rn-alert-surface` – input & surface background
+* `--rn-alert-border` – border color
+* `--rn-alert-elev` – box shadow / elevation
+* `--rn-alert-accent` – primary button color
+* `--rn-alert-accent-hover` – primary button hover color
+* `--rn-alert-danger` – destructive button color
+* `--rn-alert-danger-hover` – destructive button hover color
+* `--rn-alert-radius` – border radius (dialogs/buttons)
+* `--rn-alert-radius-sm` – small border radius (inputs/buttons)
+* `--rn-alert-spacing` – default padding
+* `--rn-alert-spacing-sm` – small padding
+* `--rn-alert-btn-min` – minimum button height (touch target)
+* `--rn-alert-outline` – focus outline style
+* `--rn-alert-outline-weak` – subtle focus outline
+* `--rn-alert-font` – font family
+* `--rn-alert-font-size` – base font size
+* `--rn-alert-title-size` – title font size
 
-- [Development workflow](CONTRIBUTING.md#development-workflow)
-- [Sending a pull request](CONTRIBUTING.md#sending-a-pull-request)
-- [Code of conduct](CODE_OF_CONDUCT.md)
+## 🤝 Contributing
 
-## License
+We welcome contributions!
+See [CONTRIBUTING.md](CONTRIBUTING.md) for workflow and [CODE\_OF\_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-MIT
+## 📄 License
+
+MIT © [Blazej Kustra](https://github.com/blazejkustra)
 
 ---
 
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
+Built with [create-react-native-library](https://github.com/callstack/react-native-builder-bob) 🛠
