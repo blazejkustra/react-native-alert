@@ -38,6 +38,11 @@ class ReactNativeAlertModule(
     onError: Callback,
     onAction: Callback
   ) {
+    // Prevent multiple dialogs from being shown at once
+    if (dialogRef.get()?.isShowing == true) {
+      return
+    }
+    
     val activity = currentActivity ?: return
     if (activity.isFinishing || (Build.VERSION.SDK_INT >= 17 && activity.isDestroyed)) return
 
@@ -69,21 +74,25 @@ class ReactNativeAlertModule(
 
       labels.getOrNull(0)?.let { text ->
         builder.setNeutralButton(text) { _, _ ->
+          dialogRef.clear()
           onAction.invoke(0 /*buttonClicked*/, 0 /*neutral*/, mainInput?.text?.toString(), usernameInput?.text?.toString())
         }
       }
       labels.getOrNull(1)?.let { text ->
         builder.setNegativeButton(text) { _, _ ->
+          dialogRef.clear()
           onAction.invoke(0, 1 /*negative*/, mainInput?.text?.toString(), usernameInput?.text?.toString())
         }
       }
       labels.getOrNull(2)?.let { text ->
         builder.setPositiveButton(text) { _, _ ->
+          dialogRef.clear()
           onAction.invoke(0, 2 /*positive*/, mainInput?.text?.toString(), usernameInput?.text?.toString())
         }
       }
 
       builder.setOnCancelListener {
+        dialogRef.clear()
         onAction.invoke(1 /*dismissed*/, -1, null, null)
       }
 
@@ -131,6 +140,10 @@ class ReactNativeAlertModule(
       config.getIntOrNull("usernameMaxLength")?.takeIf { it > 0 }?.let {
         filters = arrayOf(InputFilter.LengthFilter(it))
       }
+      val typedArray = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal))
+      val tintColor = typedArray.getColor(0, 0xFF000000.toInt())
+      typedArray.recycle()
+      backgroundTintList = android.content.res.ColorStateList.valueOf(tintColor)
       val margin = (ctx.resources.displayMetrics.density * 4).toInt()
       val params = LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -152,6 +165,11 @@ class ReactNativeAlertModule(
       config.getIntOrNull("maxLength")?.takeIf { it > 0 }?.let {
         filters = arrayOf(InputFilter.LengthFilter(it))
       }
+      // Apply theme-aware background tint
+      val typedArray = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal))
+      val tintColor = typedArray.getColor(0, 0xFF000000.toInt())
+      typedArray.recycle()
+      backgroundTintList = android.content.res.ColorStateList.valueOf(tintColor)
       layoutParams = LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.WRAP_CONTENT
