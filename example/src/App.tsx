@@ -246,6 +246,77 @@ export default function App() {
     );
   };
 
+  const showNestedPrompt = () => {
+    Alert.prompt(
+      'Create Account',
+      'Enter your username:',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Next',
+          style: 'default',
+          onPress: (username) => {
+            if (username && username.trim().length > 0) {
+              // First prompt successful, open second prompt
+              Alert.prompt(
+                'Create Account',
+                `Username: ${username}\n\nEnter your email address:`,
+                [
+                  { text: 'Back', style: 'cancel' },
+                  {
+                    text: 'Next',
+                    style: 'default',
+                    onPress: (email) => {
+                      if (email && email.includes('@')) {
+                        // Second prompt successful, open third prompt
+                        Alert.prompt(
+                          'Create Account',
+                          `Username: ${username}\nEmail: ${email}\n\nEnter your password:`,
+                          [
+                            { text: 'Back', style: 'cancel' },
+                            {
+                              text: 'Create Account',
+                              style: 'default',
+                              onPress: (password) => {
+                                if (password && password.length >= 6) {
+                                  Alert.alert(
+                                    'Account Created!',
+                                    `Welcome ${username}!\nEmail: ${email}\nPassword: ${'*'.repeat(password.length)}`
+                                  );
+                                } else {
+                                  Alert.alert(
+                                    'Invalid Password',
+                                    'Password must be at least 6 characters long'
+                                  );
+                                }
+                              },
+                            },
+                          ],
+                          'secure-text'
+                        );
+                      } else {
+                        Alert.alert(
+                          'Invalid Email',
+                          'Please enter a valid email address'
+                        );
+                      }
+                    },
+                  },
+                ],
+                'plain-text',
+                '',
+                'email-address'
+              );
+            } else {
+              Alert.alert('Invalid Username', 'Please enter a valid username');
+            }
+          },
+        },
+      ],
+      'plain-text'
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>React Native Alert Demo</Text>
@@ -324,6 +395,13 @@ export default function App() {
         >
           <Text style={styles.buttonText}>Show Destructive Prompt</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.nestedButton]}
+          onPress={showNestedPrompt}
+        >
+          <Text style={styles.buttonText}>Show Nested Prompts</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -377,6 +455,9 @@ const styles = StyleSheet.create({
   },
   destructiveButton: {
     backgroundColor: '#FF3B30',
+  },
+  nestedButton: {
+    backgroundColor: '#34495E',
   },
   buttonText: {
     color: 'white',
