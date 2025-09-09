@@ -6,6 +6,8 @@ import android.text.InputFilter
 import android.text.InputType
 import android.view.ContextThemeWrapper
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
@@ -98,21 +100,28 @@ class ReactNativeAlertModule(
 
       val dialog = builder.create()
       dialogRef = WeakReference(dialog)
+      
+      // Set window soft input mode to show keyboard
+      dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+      
       dialog.show()
-
-      // Focus the first input field after dialog is shown
+      
+      // Show keyboard after dialog is shown
       val firstInput = usernameInput ?: mainInput
-      firstInput?.requestFocus()
+      firstInput?.let { input ->
+        input.requestFocus()
+        input.post {
+          val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+          imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+        }
+      }
     }
   }
 
   // ----- Lifecycle  -----
   override fun onHostResume() = Unit
-  override fun onHostPause() {
-    dialogRef.get()?.let { if (it.isShowing) it.dismiss() }
-  }
+  override fun onHostPause() = Unit
   override fun onHostDestroy() {
-    dialogRef.get()?.let { if (it.isShowing) it.dismiss() }
     dialogRef.clear()
   }
 
