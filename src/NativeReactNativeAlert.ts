@@ -11,7 +11,7 @@ export type AlertType =
 export type DialogButton = {
   text?: string | null;
   style?: AlertButtonStyle | null;
-  isPreferred?: boolean | null; // ignored on Android if you want
+  isPreferred?: boolean | null;
 };
 
 export type DialogOptions = {
