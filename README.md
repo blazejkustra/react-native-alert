@@ -1,3 +1,5 @@
+![React Native Alert](./assets/banner.png)
+
 # @blazejkustra/react-native-alert
 
 ✨ **Universal, customizable alerts and prompts** for React Native — identical API to the built-in `Alert`, but works seamlessly across **iOS, Android, and Web**.
