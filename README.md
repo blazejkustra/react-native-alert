@@ -110,12 +110,15 @@ Override CSS variables to match your design system:
   --rn-alert-danger: #dc2626;   /* Destructive button */
   --rn-alert-bg: #fefefe;       /* Dialog background */
   --rn-alert-fg: #111827;       /* Text color */
-  --rn-alert-radius: 16px;      /* Border radius */
+  --rn-alert-radius: 16px;        /* Border radius */
 }
 
-:root[data-theme="dark"] {
- ...
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    ...
+  }
 }
+
 ```
 
 Available variables:
