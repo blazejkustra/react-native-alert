@@ -1,25 +1,27 @@
-import type {
-  AlertButton,
-  AlertOptions,
-  PromptButtons,
-} from './NativeReactNativeAlert';
 import { Alert as RNAlert } from 'react-native';
-import { createDialogElement } from './web/alert';
+import { createDialogElement } from './utils/web';
 
 // Import CSS for web platform
-require('./alert.css');
+require('./utils/default-styles.css');
 
 /**
  * Web-specific Alert implementation using HTML5 dialog elements
+ * Provides native-like alert and prompt dialogs for web browsers
  */
 class Alert {
   /**
    * Launches an alert dialog with the specified title and message.
+   *
+   * @param title - The dialog's title
+   * @param message - An optional message that appears below the title
+   * @param buttons - An optional array of buttons or a function that will be called
    */
   static alert(...[title, message, buttons]: Parameters<typeof RNAlert.alert>) {
     const dialog = createDialogElement(title, message, buttons);
     document.body.appendChild(dialog);
     dialog.showModal();
+
+    // Clean up dialog when closed
     dialog.addEventListener('close', () => {
       document.body.removeChild(dialog);
     });
@@ -54,12 +56,22 @@ class Alert {
       typeof RNAlert.prompt
     >
   ) {
+    const inputType = type === 'secure-text' ? 'password' : 'text';
     const inputField = `
-      <input type="${type === 'secure-text' ? 'password' : 'text'}" value="${defaultValue || ''}" class="alert-input" />
+      <input 
+        type="${inputType}" 
+        value="${defaultValue || ''}" 
+        class="rn-alert__input-field" 
+        placeholder="Enter text..."
+        autocomplete="off"
+      />
     `;
+
     const dialog = createDialogElement(title, message, buttons, inputField);
     document.body.appendChild(dialog);
     dialog.showModal();
+
+    // Clean up dialog when closed
     dialog.addEventListener('close', () => {
       document.body.removeChild(dialog);
     });
@@ -67,4 +79,3 @@ class Alert {
 }
 
 export default Alert;
-export type { AlertButton, AlertOptions, PromptButtons };
