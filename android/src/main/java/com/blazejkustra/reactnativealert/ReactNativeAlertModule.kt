@@ -59,8 +59,6 @@ class ReactNativeAlertModule(
         ContextThemeWrapper(activity, androidx.appcompat.R.style.Theme_AppCompat_Dialog_Alert)
       }
 
-      Log.d("ReactNativeAlertModule", "themed: $themed")
-
       val type = config.getStringOrNull("type") ?: "default"
       val (contentView, usernameInput, mainInput) = buildInputs(themed, type, config)
 

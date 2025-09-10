@@ -1,7 +1,6 @@
 {
   "name": "@blazejkustra/react-native-alert-example",
   "version": "0.0.1",
-  "private": false,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
