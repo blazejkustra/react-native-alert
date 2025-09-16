@@ -46,10 +46,10 @@ class ReactNativeAlertModule(
     }
     
     val activity = currentActivity ?: return
-    if (activity.isFinishing || (Build.VERSION.SDK_INT >= 17 && activity.isDestroyed)) return
+    if (activity.isFinishing || activity.isDestroyed) return
 
     UiThreadUtil.runOnUiThread {
-      if (activity.isFinishing || (Build.VERSION.SDK_INT >= 17 && activity.isDestroyed)) return@runOnUiThread
+      if (activity.isFinishing || activity.isDestroyed) return @runOnUiThread
 
       val themed: Context = if (Build.VERSION.SDK_INT >= 29) {
         // Use system theme on Android 10+ (API 29+)
