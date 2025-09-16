@@ -125,6 +125,9 @@ class ReactNativeAlertModule(
   }
 
   // ----- Helpers -----
+  private val Int.dp: Int
+    get() = (this * android.content.res.Resources.getSystem().displayMetrics.density).toInt()
+
   private fun Context.getThemeColor(attr: Int): Int {
     val typedArray = obtainStyledAttributes(intArrayOf(attr))
     val color = typedArray.getColor(0, 0xFF000000.toInt())
@@ -147,8 +150,8 @@ class ReactNativeAlertModule(
 
     val layout = LinearLayout(ctx).apply {
       orientation = LinearLayout.VERTICAL
-      val horizontalPad = (ctx.resources.displayMetrics.density * 20).toInt()
-      val verticalPad = (ctx.resources.displayMetrics.density * 12).toInt()
+      val horizontalPad = 20.dp
+      val verticalPad = 12.dp
       setPadding(horizontalPad, verticalPad, horizontalPad, verticalPad)
       layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
@@ -163,7 +166,7 @@ class ReactNativeAlertModule(
       }
       val tintColor = ctx.getThemeColor(android.R.attr.colorControlNormal)
       backgroundTintList = android.content.res.ColorStateList.valueOf(tintColor)
-      val margin = (ctx.resources.displayMetrics.density * 4).toInt()
+      val margin = 4.dp
       val params = LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.WRAP_CONTENT
