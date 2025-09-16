@@ -9,10 +9,9 @@ import java.util.HashMap
 
 class ReactNativeAlertPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-    return if (name == ReactNativeAlertModule.NAME) {
-      ReactNativeAlertModule(reactContext)
-    } else {
-      null
+    return when (name) {
+      ReactNativeAlertModule.NAME -> ReactNativeAlertModule(reactContext)
+      else -> null
     }
   }
 
