@@ -125,12 +125,25 @@ class ReactNativeAlertModule(
   }
 
   // ----- Helpers -----
+  private fun Context.getThemeColor(attr: Int): Int {
+    val typedArray = obtainStyledAttributes(intArrayOf(attr))
+    val color = typedArray.getColor(0, 0xFF000000.toInt())
+    typedArray.recycle()
+    return color
+  }
+
+  private data class InputViews(
+    val contentView: LinearLayout?,
+    val usernameInput: EditText?,
+    val mainInput: EditText?
+  )
+
   private fun buildInputs(
     ctx: Context,
     type: String,
     config: ReadableMap
-  ): Triple<LinearLayout?, EditText?, EditText?> {
-    if (type == "default") return Triple(null, null, null)
+  ): InputViews {
+    if (type == "default") return InputViews(null, null, null)
 
     val layout = LinearLayout(ctx).apply {
       orientation = LinearLayout.VERTICAL
@@ -148,9 +161,7 @@ class ReactNativeAlertModule(
       config.getIntOrNull("usernameMaxLength")?.takeIf { it > 0 }?.let {
         filters = arrayOf(InputFilter.LengthFilter(it))
       }
-      val typedArray = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal))
-      val tintColor = typedArray.getColor(0, 0xFF000000.toInt())
-      typedArray.recycle()
+      val tintColor = ctx.getThemeColor(android.R.attr.colorControlNormal)
       backgroundTintList = android.content.res.ColorStateList.valueOf(tintColor)
       val margin = (ctx.resources.displayMetrics.density * 4).toInt()
       val params = LinearLayout.LayoutParams(
@@ -174,9 +185,7 @@ class ReactNativeAlertModule(
         filters = arrayOf(InputFilter.LengthFilter(it))
       }
       // Apply theme-aware background tint
-      val typedArray = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal))
-      val tintColor = typedArray.getColor(0, 0xFF000000.toInt())
-      typedArray.recycle()
+      val tintColor = ctx.getThemeColor(android.R.attr.colorControlNormal)
       backgroundTintList = android.content.res.ColorStateList.valueOf(tintColor)
       layoutParams = LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -188,7 +197,7 @@ class ReactNativeAlertModule(
     applyKeyboardType(username ?: main, config.getStringOrNull("keyboardType"))
 
     layout.addView(main)
-    return Triple(layout, username, main)
+    return InputViews(layout, username, main)
   }
 
   private fun applyKeyboardType(target: EditText, keyboardType: String?) {
