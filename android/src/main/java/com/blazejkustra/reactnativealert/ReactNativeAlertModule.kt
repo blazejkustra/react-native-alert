@@ -44,12 +44,12 @@ class ReactNativeAlertModule(
     if (dialogRef.get()?.isShowing == true) {
       return
     }
-    
+
     val activity = currentActivity ?: return
-    if (activity.isFinishing || (Build.VERSION.SDK_INT >= 17 && activity.isDestroyed)) return
+    if (activity.isFinishing || activity.isDestroyed) return
 
     UiThreadUtil.runOnUiThread {
-      if (activity.isFinishing || (Build.VERSION.SDK_INT >= 17 && activity.isDestroyed)) return@runOnUiThread
+      if (activity.isFinishing || activity.isDestroyed) return@runOnUiThread
 
       val themed: Context = if (Build.VERSION.SDK_INT >= 29) {
         // Use system theme on Android 10+ (API 29+)
@@ -75,19 +75,34 @@ class ReactNativeAlertModule(
       labels.getOrNull(0)?.let { text ->
         builder.setNeutralButton(text) { _, _ ->
           dialogRef.clear()
-          onAction.invoke(0 /*buttonClicked*/, 0 /*neutral*/, mainInput?.text?.toString(), usernameInput?.text?.toString())
+          onAction.invoke(
+            0 /*buttonClicked*/,
+            0 /*neutral*/,
+            mainInput?.text?.toString(),
+            usernameInput?.text?.toString()
+          )
         }
       }
       labels.getOrNull(1)?.let { text ->
         builder.setNegativeButton(text) { _, _ ->
           dialogRef.clear()
-          onAction.invoke(0, 1 /*negative*/, mainInput?.text?.toString(), usernameInput?.text?.toString())
+          onAction.invoke(
+            0,
+            1 /*negative*/,
+            mainInput?.text?.toString(),
+            usernameInput?.text?.toString()
+          )
         }
       }
       labels.getOrNull(2)?.let { text ->
         builder.setPositiveButton(text) { _, _ ->
           dialogRef.clear()
-          onAction.invoke(0, 2 /*positive*/, mainInput?.text?.toString(), usernameInput?.text?.toString())
+          onAction.invoke(
+            0,
+            2 /*positive*/,
+            mainInput?.text?.toString(),
+            usernameInput?.text?.toString()
+          )
         }
       }
 
@@ -98,12 +113,12 @@ class ReactNativeAlertModule(
 
       val dialog = builder.create()
       dialogRef = WeakReference(dialog)
-      
+
       // Set window soft input mode to show keyboard
       dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-      
+
       dialog.show()
-      
+
       // Show keyboard after dialog is shown
       val firstInput = usernameInput ?: mainInput
       firstInput?.let { input ->
@@ -125,19 +140,38 @@ class ReactNativeAlertModule(
   }
 
   // ----- Helpers -----
+  private val Int.dp: Int
+    get() = (this * android.content.res.Resources.getSystem().displayMetrics.density).toInt()
+
+  private fun Context.getThemeColor(attr: Int): Int {
+    val typedArray = obtainStyledAttributes(intArrayOf(attr))
+    val color = typedArray.getColor(0, 0xFF000000.toInt())
+    typedArray.recycle()
+    return color
+  }
+
+  private data class InputViews(
+    val contentView: LinearLayout?,
+    val usernameInput: EditText?,
+    val mainInput: EditText?
+  )
+
   private fun buildInputs(
     ctx: Context,
     type: String,
     config: ReadableMap
-  ): Triple<LinearLayout?, EditText?, EditText?> {
-    if (type == "default") return Triple(null, null, null)
+  ): InputViews {
+    if (type == "default") return InputViews(null, null, null)
 
     val layout = LinearLayout(ctx).apply {
       orientation = LinearLayout.VERTICAL
-      val horizontalPad = (ctx.resources.displayMetrics.density * 20).toInt()
-      val verticalPad = (ctx.resources.displayMetrics.density * 12).toInt()
+      val horizontalPad = 20.dp
+      val verticalPad = 12.dp
       setPadding(horizontalPad, verticalPad, horizontalPad, verticalPad)
-      layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+      layoutParams = ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+      )
     }
 
     val isLogin = type == "login-password"
@@ -148,11 +182,9 @@ class ReactNativeAlertModule(
       config.getIntOrNull("usernameMaxLength")?.takeIf { it > 0 }?.let {
         filters = arrayOf(InputFilter.LengthFilter(it))
       }
-      val typedArray = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal))
-      val tintColor = typedArray.getColor(0, 0xFF000000.toInt())
-      typedArray.recycle()
+      val tintColor = ctx.getThemeColor(android.R.attr.colorControlNormal)
       backgroundTintList = android.content.res.ColorStateList.valueOf(tintColor)
-      val margin = (ctx.resources.displayMetrics.density * 4).toInt()
+      val margin = 4.dp
       val params = LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -174,9 +206,7 @@ class ReactNativeAlertModule(
         filters = arrayOf(InputFilter.LengthFilter(it))
       }
       // Apply theme-aware background tint
-      val typedArray = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal))
-      val tintColor = typedArray.getColor(0, 0xFF000000.toInt())
-      typedArray.recycle()
+      val tintColor = ctx.getThemeColor(android.R.attr.colorControlNormal)
       backgroundTintList = android.content.res.ColorStateList.valueOf(tintColor)
       layoutParams = LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -188,17 +218,23 @@ class ReactNativeAlertModule(
     applyKeyboardType(username ?: main, config.getStringOrNull("keyboardType"))
 
     layout.addView(main)
-    return Triple(layout, username, main)
+    return InputViews(layout, username, main)
   }
 
   private fun applyKeyboardType(target: EditText, keyboardType: String?) {
     when (keyboardType) {
-      "email-address" -> target.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+      "email-address" -> target.inputType =
+        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+
       "numeric", "number-pad" -> target.inputType = InputType.TYPE_CLASS_NUMBER
       "phone-pad" -> target.inputType = InputType.TYPE_CLASS_PHONE
-      "decimal-pad" -> target.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+      "decimal-pad" -> target.inputType =
+        InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+
       "url" -> target.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
-      "web-search", "twitter" -> target.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+      "web-search", "twitter" -> target.inputType =
+        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
       else -> Unit
     }
   }
@@ -214,7 +250,8 @@ class ReactNativeAlertModule(
     if (hasKey(key) && !isNull(key)) getInt(key) else null
 
   private fun ReadableMap.getArrayOrEmpty(key: String): ReadableArray =
-    if (hasKey(key) && !isNull(key)) getArray(key) ?: Arguments.createArray() else Arguments.createArray()
+    if (hasKey(key) && !isNull(key)) getArray(key)
+      ?: Arguments.createArray() else Arguments.createArray()
 
   private fun ReadableArray.collectButtonLabels(max: Int): List<String> {
     val out = ArrayList<String>(max)
