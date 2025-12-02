@@ -1,8 +1,10 @@
-![React Native Alert](./assets/banner.png)
-
 # @blazejkustra/react-native-alert
 
+![NPM Downloads](https://img.shields.io/npm/dw/%40blazejkustra%2Freact-native-alert?style=for-the-badge)
+
 ✨ **Universal, customizable alerts and prompts** for React Native — identical API to the built-in `Alert`, but works seamlessly across **iOS, Android, and Web**.
+
+![React Native Alert](./assets/banner.png)
 
 ## 🚀 Features
 
