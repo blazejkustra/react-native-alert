@@ -60,6 +60,7 @@ class Alert {
         buttons: buttons.map((b) => ({
           text: b?.text ?? '',
           style: b?.style ?? 'default',
+          isPreferred: b?.isPreferred ?? false,
         })),
         type: type ?? 'plain-text',
         defaultValue: defaultValue ?? '',
