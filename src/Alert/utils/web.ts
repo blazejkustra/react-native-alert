@@ -96,19 +96,35 @@ function createCustomButtons(
   buttons: AlertButton[] | null,
   inputField?: string
 ): void {
-  buttons?.forEach(({ text, style, onPress }, index) => {
+  buttons?.forEach(({ text, style, onPress, isPreferred }, index) => {
     const button = document.createElement('button');
     button.innerText = text || 'OK';
 
-    // Apply appropriate button styling
+    // Determine button variant based on priority:
+    // 1. Destructive style (highest priority)
+    // 2. Preferred button
+    // 3. Fallback: first button in 2-button dialog (if second isn't preferred)
+    // 4. Default: secondary
+    const baseClass = 'rn-alert__button';
+    let variantClass: string;
+
     if (style === 'destructive') {
-      button.className = 'rn-alert__button rn-alert__button--destructive';
-    } else if (index === 0 && buttons.length === 2) {
-      // First button in two-button dialog gets primary styling
-      button.className = 'rn-alert__button rn-alert__button--primary';
+      variantClass = 'rn-alert__button--destructive';
+    } else if (isPreferred === true) {
+      variantClass = 'rn-alert__button--primary';
     } else {
-      button.className = 'rn-alert__button rn-alert__button--secondary';
+      const isFirstButtonInTwoButtonDialog =
+        index === 0 && buttons.length === 2;
+      const secondButtonIsNotPreferred = buttons[1]?.isPreferred !== true;
+
+      if (isFirstButtonInTwoButtonDialog && secondButtonIsNotPreferred) {
+        variantClass = 'rn-alert__button--primary';
+      } else {
+        variantClass = 'rn-alert__button--secondary';
+      }
     }
+
+    button.className = `${baseClass} ${variantClass}`;
 
     button.addEventListener('click', () => {
       dialog.close();

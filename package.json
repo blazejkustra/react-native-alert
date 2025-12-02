@@ -1,6 +1,6 @@
 {
   "name": "@blazejkustra/react-native-alert",
-  "version": "1.0.0",
+  "version": "1.0.1-rc.0",
   "description": "Universal alerts for react native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -79,8 +79,8 @@
     "prettier": "^3.6.2",
     "react": "19.1.0",
     "react-native": "0.81.1",
-    "react-native-builder-bob": "^0.40.13",
-    "release-it": "^19.0.4",
+    "react-native-builder-bob": "0.40.16",
+    "release-it": "19.0.6",
     "turbo": "^2.5.6",
     "typescript": "^5.9.2"
   },
