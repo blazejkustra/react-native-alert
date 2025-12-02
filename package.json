@@ -1,6 +1,6 @@
 {
   "name": "@blazejkustra/react-native-alert",
-  "version": "1.0.0",
+  "version": "1.0.1-rc.0",
   "description": "Universal alerts for react native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
