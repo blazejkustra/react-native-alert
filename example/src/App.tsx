@@ -11,7 +11,7 @@ export default function App() {
   const showAlert = () => {
     Alert.alert('Alert Title', 'This is a simple alert message', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'OK', style: 'default' },
+      { text: 'OK', style: 'default', isPreferred: true },
     ]);
   };
 
