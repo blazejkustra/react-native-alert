@@ -116,7 +116,9 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    runs-on: macos-latest
+    # macos-latest is macOS 26 and only ships Xcode 26.x.
+    # Keep 16.4 on macos-15 until this example moves off RN 0.85.
+    runs-on: macos-15
 
     env:
       XCODE_VERSION: 16.4
