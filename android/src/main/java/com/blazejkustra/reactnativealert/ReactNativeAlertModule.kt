@@ -45,7 +45,7 @@ class ReactNativeAlertModule(
       return
     }
 
-    val activity = currentActivity ?: return
+    val activity = reactContext.currentActivity ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     UiThreadUtil.runOnUiThread {
